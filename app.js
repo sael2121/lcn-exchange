@@ -11,7 +11,9 @@ var STOCKS = [
   { ca: 'EgYvd9MGhe4uHYap55HwKDwHf1za7QAmGifVudRLpump', name: 'Ammu Nation', sym: 'AMMU', img: 'logos/ammu.png', snap: { price: 0.000001996, mcap: 1996.19, chg: 0 } },
   { ca: 'FowhkNQmvNr2J7CLg7RgDd59Wa4iXvhybbEXjW61pump', name: 'AudaCity', sym: 'AUDACITY', img: 'logos/audacity.png', snap: { price: 0.000001986, mcap: 1986.4, chg: 0 } },
   { ca: '3Bo1iDWPvcXWpGoHqNugNFj12WUDyWYf5jmAacunpump', name: 'NINE1NINE', sym: 'NINE1NINE', img: 'logos/nine1nine.png', snap: { price: 0.000001997, mcap: 1997.97, chg: 0.02 } },
-  { ca: 'DJoV1RCnJa3XLLUiBnRZe6rm8Rwg8pr1mYPRU99Jpump', name: 'Only Raw Records', sym: 'ORR', img: 'logos/orr.png', snap: { price: 0.000001997, mcap: 1997.97, chg: 0.02 } }
+  { ca: 'DJoV1RCnJa3XLLUiBnRZe6rm8Rwg8pr1mYPRU99Jpump', name: 'Only Raw Records', sym: 'ORR', img: 'logos/orr.png', snap: { price: 0.000001997, mcap: 1997.97, chg: 0.02 } },
+  { ca: '22Cjv4i4m5w1vtEgBwgj1q5ynF8b9WdLqnKmUBHApump', name: 'Maze Bank', sym: 'MAZE', img: 'logos/maze.png', snap: { price: 0.000002113, mcap: 2113.98, chg: 5.28 } },
+  { ca: 'poyNLBWzjPXaKkBqMFcBCdjhWosEG7faD7WdNsupump', name: 'Game Horde', sym: 'GM', img: 'logos/gamehorde.png', snap: { price: 0.000002013, mcap: 2013.81, chg: 0 } }
 ];
 
 // Link of the LCN account on X (Twitter)

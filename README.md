@@ -1,8 +1,8 @@
 # LCN · Liberty City National Exchange
 
-- `/` : Coming soon page (public)
-- `/app/` : the full site in progress (Markets, stock pages, Portfolio, How it works)
+The stock exchange of the GTA universe: buy and sell the biggest companies with SOL, every share on-chain.
 
-When the site is ready to launch, move the contents of `app/` back to the root (or point the coming soon button to `/app/`).
+- Live prices: DexScreener · charts: GeckoTerminal · holdings: public Solana RPC
+- Trades: PumpPortal builds the pump.fun transaction, Phantom signs and sends it
 
-To list a new company, add a line to `STOCKS` in `app/app.js` and its logo in `app/logos/`.
+To list a new company, add a line to `STOCKS` in `app.js` and its logo in `logos/`.
