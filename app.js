@@ -14,6 +14,9 @@ var STOCKS = [
   { ca: 'DJoV1RCnJa3XLLUiBnRZe6rm8Rwg8pr1mYPRU99Jpump', name: 'Only Raw Records', sym: 'ORR', img: 'logos/orr.png', snap: { price: 0.000001997, mcap: 1997.97, chg: 0.02 } }
 ];
 
+// Link of the LCN account on X (Twitter)
+var X_URL = 'https://x.com/';
+
 var LCN = {
   live: {},
   liveAt: null,
@@ -110,7 +113,10 @@ function renderChrome(active) {
         <img class="brand-logo" src="logos/lcn.png" alt="LCN">
         <div class="brand-text"><span class="brand-title arch">LIBERTY CITY NATIONAL</span><span class="brand-sub">EXCHANGE</span></div>
       </a>
-      <button type="button" class="wallet-btn" data-wallet>${WALLET_ICON}<span data-wallet-label>Connect wallet</span></button>
+      <div class="header-actions">
+        <a class="x-btn" href="${X_URL}" target="_blank" rel="noopener" aria-label="LCN on X"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.47 21H2.4l7.17-8.2L2 3h6.33l4.37 5.77L17.75 3zm-1.08 16.2h1.7L7.4 4.73H5.58L16.67 19.2z"/></svg></a>
+        <button type="button" class="wallet-btn" data-wallet>${WALLET_ICON}<span data-wallet-label>Connect wallet</span></button>
+      </div>
     </header>
     <nav class="nav">
       ${tab('index.html', 'Markets', 'markets')}
@@ -121,7 +127,7 @@ function renderChrome(active) {
   document.getElementById('chrome-bottom').innerHTML = `
     <footer>
       <span>LCN · Liberty City National Exchange — fan-made stock exchange on Solana. Payments are real SOL and final. Nothing here is financial advice.</span>
-      <span style="color:#fff">X · Telegram</span>
+      <a href="${X_URL}" target="_blank" rel="noopener" style="color:#fff;text-decoration:underline;text-underline-offset:3px">Follow LCN on X</a>
     </footer>
     <div class="modal hidden" id="wallet-modal">
       <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="wm-title">
