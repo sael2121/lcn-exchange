@@ -68,13 +68,13 @@ async function refreshPrices() {
 }
 
 // ---------- wallet (Phantom) ----------
-function phantom() {
+function lcnPhantomProvider() {
   const p = (window.phantom && window.phantom.solana) || window.solana;
   return p && p.isPhantom ? p : null;
 }
 function shortAddr(a) { return a.slice(0, 4) + '…' + a.slice(-4); }
 async function toggleWallet() {
-  const provider = phantom();
+  const provider = lcnPhantomProvider();
   if (LCN.wallet) {
     try { if (provider) await provider.disconnect(); } catch (e) {}
     LCN.wallet = null;
@@ -89,7 +89,7 @@ async function toggleWallet() {
   } catch (e) {}
 }
 async function silentReconnect() {
-  const provider = phantom();
+  const provider = lcnPhantomProvider();
   if (!provider) return;
   try {
     const res = await provider.connect({ onlyIfTrusted: true });
