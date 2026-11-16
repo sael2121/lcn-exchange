@@ -143,6 +143,7 @@
 
 <script src="app.js"></script>
 <script>
+(function () {
 renderChrome('markets');
 
 const RANGES = {
@@ -303,6 +304,7 @@ setInterval(refreshPrices, 10000);
 setInterval(() => { if (state.selected) loadChart(); }, 60000);
 const fromHash = location.hash.slice(1);
 if (STOCKS.some((s) => s.ca === fromHash)) openStock(fromHash);
+})();
 </script>
 </body>
 </html>

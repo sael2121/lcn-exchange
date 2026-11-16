@@ -58,6 +58,7 @@
 </div>
 <script src="app.js"></script>
 <script>
+(function () {
 renderChrome('portfolio');
 function paint() {
   const on = !!LCN.wallet;
@@ -67,6 +68,7 @@ function paint() {
 }
 LCN.onUpdate(paint);
 paint();
+})();
 </script>
 </body>
 </html>

@@ -2,7 +2,7 @@
 
 // The stocks listed on LCN. Add a line here to list a new company.
 // snap = last known values, shown until live data arrives.
-const STOCKS = [
+var STOCKS = [
   { ca: 'FYmetCGBfuepV6HbYkAmmPG28T9iN6qqpJPvydpzpump', name: 'Burger Shot', sym: 'BURGER', img: 'logos/burger.png', snap: { price: 0.000001994, mcap: 1994.05, chg: 0.02 } },
   { ca: 'DcFXfTjak5K2B66pBEc44t7YZhPvnvbKpYbsziTkpump', name: 'Ecola', sym: 'ECOLA', img: 'logos/ecola.png', snap: { price: 0.000001996, mcap: 1996.57, chg: 0.02 } },
   { ca: 'HA1M9YguVxgaPeGQu2xbBTWbnBLCz6KSeJuPtt71pump', name: 'Sprunk', sym: 'SPRUNK', img: 'logos/sprunk.png', snap: { price: 0.000001988, mcap: 1988.45, chg: 0.02 } },
@@ -14,7 +14,7 @@ const STOCKS = [
   { ca: 'DJoV1RCnJa3XLLUiBnRZe6rm8Rwg8pr1mYPRU99Jpump', name: 'Only Raw Records', sym: 'ORR', img: 'logos/orr.png', snap: { price: 0.000001997, mcap: 1997.97, chg: 0.02 } }
 ];
 
-const LCN = {
+var LCN = {
   live: {},
   liveAt: null,
   wallet: null,
@@ -99,7 +99,7 @@ async function silentReconnect() {
 }
 
 // ---------- shared layout ----------
-const WALLET_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"/><path d="M3 5v14a2 2 0 0 0 2 2h15V7"/><circle cx="16" cy="14" r="1.5"/></svg>';
+var WALLET_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"/><path d="M3 5v14a2 2 0 0 0 2 2h15V7"/><circle cx="16" cy="14" r="1.5"/></svg>';
 
 function renderChrome(active) {
   const tab = (href, label, key, last) =>
