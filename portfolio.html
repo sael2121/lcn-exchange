@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LCN – Portfolio</title>
+<link rel="icon" href="logos/fleeca.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+  <div id="chrome-top"></div>
+  <div class="redline"></div>
+  <main style="display:flex;flex-direction:column;gap:24px">
+    <div>
+      <h1 class="title">My portfolio</h1>
+      <p class="lead">The shares held in your connected wallet, read straight from the blockchain.</p>
+    </div>
+
+    <section class="card" id="connect-box" style="display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;padding:56px 24px">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#2b55d6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"/><path d="M3 5v14a2 2 0 0 0 2 2h15V7"/><circle cx="16" cy="14" r="1.5"/></svg>
+      <div class="arch" style="font-size:26px;color:var(--blue-dark)">CONNECT YOUR WALLET</div>
+      <p style="margin:0;font-size:16px;color:var(--muted);max-width:460px">Connect Phantom to see your shares, their value and your profit or loss.</p>
+      <button type="button" class="btn-blue" data-wallet style="min-height:54px;padding:0 28px;font-size:17px;box-shadow:0 4px 0 var(--blue-dark)">Connect wallet</button>
+    </section>
+
+    <section class="kpis hidden" id="kpis">
+      <div class="kpi blue"><small>Portfolio value</small><b>— SOL</b></div>
+      <div class="kpi"><small>Total invested</small><b>— SOL</b></div>
+      <div class="kpi"><small>Profit / loss</small><b>—</b></div>
+      <div class="kpi"><small>Stocks held</small><b>—</b></div>
+    </section>
+
+    <section>
+      <div style="display:flex"><div class="arch" style="background:var(--blue-tab);color:#fff;padding:12px 22px;font-size:20px;min-width:200px">MY SHARES</div></div>
+      <div class="tabbar"></div>
+      <div class="scroll">
+        <div class="table">
+          <div class="trow" style="grid-template-columns:2.2fr 1fr 1.1fr 1.1fr 1.1fr 1fr 0.9fr">
+            <div class="th">Company</div><div class="th">Shares</div><div class="th">Avg. buy price</div><div class="th">Current price</div><div class="th">Value</div><div class="th">P/L %</div><div class="th">Trade</div>
+          </div>
+          <div class="td" style="justify-content:center;flex-direction:column;padding:44px 24px;gap:12px;text-align:center">
+            <p style="margin:0;font-size:16px;color:var(--muted)" id="shares-msg">Connect your wallet to see your shares.</p>
+            <a href="index.html" class="btn-blue" style="display:inline-flex;align-items:center;box-shadow:0 4px 0 var(--blue-dark)">Browse stocks</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">My trade history</div>
+      <div class="panel-empty" id="history-msg">No trades yet.</div>
+    </section>
+  </main>
+  <div id="chrome-bottom"></div>
+</div>
+<script src="app.js"></script>
+<script>
+renderChrome('portfolio');
+function paint() {
+  const on = !!LCN.wallet;
+  document.getElementById('connect-box').classList.toggle('hidden', on);
+  document.getElementById('kpis').classList.toggle('hidden', !on);
+  document.getElementById('shares-msg').textContent = on ? 'Live holdings for ' + shortAddr(LCN.wallet) + ' are coming soon.' : 'Connect your wallet to see your shares.';
+}
+LCN.onUpdate(paint);
+paint();
+</script>
+</body>
+</html>

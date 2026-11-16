@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LCN – How it works</title>
+<link rel="icon" href="logos/fleeca.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+  <div id="chrome-top"></div>
+  <div class="redline"></div>
+  <main style="display:flex;flex-direction:column;gap:28px">
+    <section class="card" style="display:flex;flex-wrap:wrap;gap:28px;align-items:center;justify-content:space-between">
+      <div style="flex:1 1 520px;min-width:0">
+        <h1 class="arch" style="margin:0;font-size:44px;line-height:1.05;color:var(--blue-dark)">HOW LCN WORKS</h1>
+        <p style="margin:14px 0 0;font-size:18px;line-height:1.6;color:#2b2f36;max-width:740px">LCN is the trading platform for the <b>biggest companies in the GTA universe</b>. Buy stocks, invest in the most famous brands of Liberty City, Los Santos and Vice City, and sell whenever you want, all with SOL from your own wallet. Every stock lives on Solana, so ownership and every trade are public and verifiable <b>on-chain</b>.</p>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button type="button" class="btn-blue" data-wallet style="min-height:54px;padding:0 24px;font-size:17px;box-shadow:0 4px 0 var(--blue-dark)"><span data-wallet-label>Connect wallet</span></button>
+        <a href="index.html" style="background:var(--red);color:#fff;font-weight:700;font-size:17px;padding:16px 24px;box-shadow:0 4px 0 #7a0010">Browse stocks</a>
+      </div>
+    </section>
+
+    <div>
+      <div style="display:flex"><div class="arch" style="background:var(--blue-tab);color:#fff;padding:12px 22px;font-size:20px;min-width:200px">4 STEPS</div></div>
+      <div class="tabbar"></div>
+      <section class="steps">
+        <div class="step"><span class="n arch">1</span><h2>Connect your wallet</h2><p>Click Connect wallet and approve the connection in Phantom. LCN never sees your private key.</p></div>
+        <div class="step"><span class="n arch">2</span><h2>Pick a company</h2><p>Browse the biggest GTA companies listed on the market and open a stock to see its price, chart and on-chain address.</p></div>
+        <div class="step"><span class="n arch">3</span><h2>Invest</h2><p>Enter how much SOL to invest and sign in Phantom. The shares land straight in your wallet and show up in your portfolio.</p></div>
+        <div class="step"><span class="n arch">4</span><h2>Sell anytime</h2><p>Sell some or all of your shares back for SOL whenever you want. Prices move with every buy and sell.</p></div>
+      </section>
+    </div>
+
+    <section class="card" style="padding:28px 32px">
+      <div class="arch" style="font-size:22px;color:var(--blue-dark);margin-bottom:20px">HOW A TRADE FLOWS</div>
+      <div class="flow">
+        <div style="background:var(--cell)"><div style="font-size:13px;color:var(--muted)">Your wallet</div><div style="font-size:19px;font-weight:700">SOL ⇄ shares</div></div>
+        <svg width="34" height="24" viewBox="0 0 34 24" fill="none" stroke="#2b55d6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8h28M22 2l8 6-8 6M32 18H4M12 12l-8 6 8 6"/></svg>
+        <div style="background:var(--blue);color:#fff"><div style="font-size:13px;color:#e3eaff">Exchange</div><div style="font-size:19px;font-weight:700">LCN</div></div>
+        <svg width="34" height="24" viewBox="0 0 34 24" fill="none" stroke="#2b55d6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 8h28M22 2l8 6-8 6M32 18H4M12 12l-8 6 8 6"/></svg>
+        <div style="background:var(--black);color:#fff"><div style="font-size:13px;color:#c7c7c7">Recorded on</div><div style="font-size:19px;font-weight:700">Solana</div></div>
+      </div>
+    </section>
+
+    <section class="panel faq">
+      <div class="panel-head" style="font-size:17px">FAQ</div>
+      <div class="faq-item"><h3>What is LCN?</h3><p>A platform to buy and invest in the stocks of the biggest companies from the GTA universe. The companies come from the game, the SOL you trade with is real.</p></div>
+      <div class="faq-item"><h3>Which companies can I invest in?</h3><p>The biggest brands of the GTA universe, created and listed by LCN. New companies show up on the market page as they go public.</p></div>
+      <div class="faq-item"><h3>Are my shares really on-chain?</h3><p>Yes. Each stock is a Solana token: your shares sit in your wallet and every trade can be checked on Solscan.</p></div>
+      <div class="faq-item"><h3>How is the price set?</h3><p>By supply and demand: when players buy a company, its price goes up; when they sell, it goes down.</p></div>
+      <div class="faq-item"><h3>Which wallet do I need?</h3><p>Phantom. Connect it at the top of the page before trading.</p></div>
+      <div class="faq-item"><h3>Are there fees?</h3><p>Solana network fees apply to every trade.</p></div>
+    </section>
+  </main>
+  <div id="chrome-bottom"></div>
+</div>
+<script src="app.js"></script>
+<script>renderChrome('how');</script>
+</body>
+</html>
