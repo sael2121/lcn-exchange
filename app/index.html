@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LCN – Liberty City National Exchange</title>
+<meta name="description" content="Buy and invest in the biggest companies of the GTA universe with SOL. Every stock lives on Solana.">
+<link rel="icon" href="logos/lcn.png">
+<link rel="apple-touch-icon" href="logos/lcn.png">
+<meta property="og:image" content="logos/lcn.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+  <div id="chrome-top"></div>
+
+  <div class="ticker"><div class="ticker-track" id="ticker"></div></div>
+
+  <main>
+    <!-- Market list -->
+    <div class="layout" id="list-view">
+      <section class="col-main">
+        <div style="margin-bottom:18px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px">
+          <div>
+            <h1 class="title">Market overview</h1>
+            <p class="lead">Buy and invest in the biggest companies of the GTA universe with SOL. Every stock lives on Solana, so every share and every trade is visible on-chain.</p>
+          </div>
+          <span class="status" id="status">○ Waiting for live data</span>
+        </div>
+        <div class="tabs" role="tablist">
+          <button type="button" class="tab active" data-tab="all" role="tab">All stocks</button>
+          <button type="button" class="tab" data-tab="up" role="tab">Gainers</button>
+          <button type="button" class="tab" data-tab="down" role="tab">Losers</button>
+        </div>
+        <div class="tabbar"></div>
+        <div class="scroll">
+          <div class="table stocks">
+            <div class="trow">
+              <div class="th" style="display:flex;justify-content:space-between">Company name <span style="color:#6b7280" aria-hidden="true">▼</span></div>
+              <div class="th">Current price</div>
+              <div class="th">Price change</div>
+              <div class="th">24h change %</div>
+              <div class="th">Market cap</div>
+              <div class="th">Trade</div>
+            </div>
+            <div id="rows" style="display:flex;flex-direction:column;gap:3px"></div>
+          </div>
+        </div>
+        <p class="note">Prices and market caps in USD, refreshed every 10 seconds from on-chain data.</p>
+      </section>
+
+      <aside class="col-side">
+        <div class="promo">
+          <div class="arch" style="font-size:26px;line-height:1.1">EVERY SHARE<br>IS ON-CHAIN</div>
+          <p>Each stock is a Solana token. The shares you buy land in your own wallet and every trade can be checked on Solscan.</p>
+          <a href="how-it-works.html">How it works</a>
+        </div>
+        <div class="panel"><div class="panel-head">Top gainers</div><div id="gainers"></div></div>
+        <div class="panel"><div class="panel-head">Top losers</div><div id="losers"></div></div>
+        <div class="panel"><div class="panel-head">Latest trades <span class="dot" aria-hidden="true"></span></div><div class="panel-empty">No trades yet. The city is waiting.</div></div>
+      </aside>
+    </div>
+
+    <!-- Stock detail -->
+    <div id="detail-view" class="hidden">
+      <button type="button" class="back" id="back">← Back to markets</button>
+      <div class="stock-head">
+        <img id="d-img" src="" alt="">
+        <div style="flex:1 1 260px;min-width:0">
+          <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">
+            <h1 class="arch" style="margin:0;font-size:40px;color:var(--blue-dark)" id="d-sym"></h1>
+            <span style="font-size:22px" id="d-name"></span>
+          </div>
+          <div style="margin-top:6px;font-size:14px;color:var(--muted2)">Listed on LCN · traded on pump.fun</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:34px;font-weight:700" id="d-price"></div>
+          <div style="font-size:18px;font-weight:600" id="d-chg"></div>
+        </div>
+      </div>
+
+      <div class="layout">
+        <section class="col-main" style="display:flex;flex-direction:column;gap:24px">
+          <div class="panel">
+            <div class="chart-bar">
+              <span>Share price (USD)</span>
+              <div style="display:flex;gap:4px" id="ranges"></div>
+            </div>
+            <div class="chart-box">
+              <div class="chart-label" style="top:22px" id="c-hi"></div>
+              <div class="chart-label" style="bottom:40px" id="c-lo"></div>
+              <svg viewBox="0 0 800 300" width="100%" height="300" preserveAspectRatio="none" role="img" aria-label="Share price chart">
+                <g stroke="#d3dae4" stroke-width="1">
+                  <line x1="0" y1="60" x2="800" y2="60"/><line x1="0" y1="120" x2="800" y2="120"/><line x1="0" y1="180" x2="800" y2="180"/><line x1="0" y1="240" x2="800" y2="240"/>
+                  <line x1="160" y1="0" x2="160" y2="300"/><line x1="320" y1="0" x2="320" y2="300"/><line x1="480" y1="0" x2="480" y2="300"/><line x1="640" y1="0" x2="640" y2="300"/>
+                </g>
+                <polygon id="c-area" fill="#3359c6" fill-opacity="0.12" points=""/>
+                <polyline id="c-line" fill="none" stroke="#3359c6" stroke-width="3" stroke-linejoin="round" vector-effect="non-scaling-stroke" points=""/>
+              </svg>
+              <div class="chart-foot"><span id="c-from"></span><span id="c-note"></span><span>now</span></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">On-chain</div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="font-size:13px;color:var(--muted)">Token address (CA)</div>
+              <div class="ca-row"><code id="d-ca"></code><button type="button" id="copy">Copy</button></div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <a class="dark-link" id="d-solscan" target="_blank" rel="noopener">View on Solscan</a>
+                <a class="dark-link" id="d-pump" target="_blank" rel="noopener">View on pump.fun</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="col-side">
+          <div class="panel">
+            <div class="trade-tabs">
+              <button type="button" class="trade-tab buy active" data-side="buy">BUY</button>
+              <button type="button" class="trade-tab sell" data-side="sell">SELL</button>
+            </div>
+            <div class="trade-body">
+              <div style="display:flex;justify-content:space-between;font-size:14px;color:var(--muted)"><span>You own</span><b style="color:var(--ink)" id="t-owned">Connect your wallet</b></div>
+              <label for="t-amount" style="font-weight:600;font-size:15px" id="t-label">Amount to spend (SOL)</label>
+              <input id="t-amount" class="input" type="text" inputmode="decimal" placeholder="0">
+              <div class="quick" id="t-quick"></div>
+              <button type="button" class="cta" id="t-cta">BUY</button>
+              <span style="font-size:13px;color:var(--muted2)" id="t-hint">Connect Phantom to trade.</span>
+            </div>
+          </div>
+          <div class="stats">
+            <div class="stat"><small>Market cap</small><b id="d-mcap"></b></div>
+            <div class="stat"><small>24h change</small><b id="d-chg2"></b></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <div id="chrome-bottom"></div>
+</div>
+
+<script src="app.js"></script>
+<script>
+(function () {
+renderChrome('markets');
+
+const RANGES = {
+  '1H': { tf: 'minute', agg: 1, limit: 60, ms: 3600e3, label: '1 hour ago' },
+  '1D': { tf: 'minute', agg: 15, limit: 96, ms: 86400e3, label: '24 hours ago' },
+  '1W': { tf: 'hour', agg: 4, limit: 42, ms: 7 * 86400e3, label: '7 days ago' }
+};
+const state = { tab: 'all', selected: null, range: '1D', candles: [], side: 'buy', tradeMsg: '' };
+const pools = {};
+const $ = (id) => document.getElementById(id);
+
+// ---------- market list ----------
+function renderList() {
+  let list = STOCKS.map((st) => {
+    const d = LCN.data(st);
+    return { st, d, fluct: d.price - d.price / (1 + d.chg / 100) };
+  });
+  if (state.tab === 'all') list.sort((a, b) => b.d.mcap - a.d.mcap);
+  if (state.tab === 'up') list = list.filter((x) => x.d.chg > 0).sort((a, b) => b.d.chg - a.d.chg);
+  if (state.tab === 'down') list = list.filter((x) => x.d.chg < 0).sort((a, b) => a.d.chg - b.d.chg);
+  $('rows').innerHTML = list.length ? list.map(({ st, d, fluct }) => `
+    <div class="trow body">
+      <div class="td name"><img class="logo" src="${st.img}" alt=""><span class="sym">${st.sym}</span><button type="button" class="linkbtn" data-open="${st.ca}">${st.name}</button></div>
+      <div class="td">${fmtPrice(d.price)}</div>
+      <div class="td">${fmtChange(fluct)}</div>
+      <div class="td"><span>${fmtPct(d.chg)}</span><span style="color:${d.chg >= 0 ? '#2f9e3a' : '#d0021b'}" aria-hidden="true">${d.chg >= 0 ? '▲' : '▼'}</span></div>
+      <div class="td" style="font-weight:600">${fmtUsd(d.mcap)}</div>
+      <div class="td" style="justify-content:center;padding:8px"><button type="button" class="btn-blue" data-open="${st.ca}">Trade</button></div>
+    </div>`).join('') : '<div class="td" style="justify-content:center;padding:28px;color:var(--muted)">No stocks in this list right now.</div>';
+
+  const tick = STOCKS.map((st) => {
+    const d = LCN.data(st);
+    return `<span style="display:inline-flex;gap:8px;align-items:baseline"><span>${st.sym} ${fmtUsd(d.mcap)}</span><span style="color:${d.chg >= 0 ? '#1a7a24' : '#c4121f'}">${d.chg >= 0 ? '▲' : '▼'} ${Math.abs(d.chg).toFixed(2)}%</span></span>`;
+  }).join('');
+  $('ticker').innerHTML = tick + tick;
+
+  const byChg = STOCKS.map((st) => ({ st, d: LCN.data(st) })).sort((a, b) => b.d.chg - a.d.chg);
+  const side = (x) => `<div class="panel-row"><span style="display:flex;align-items:center;gap:10px;min-width:0"><img src="${x.st.img}" alt="" style="width:28px;height:28px;object-fit:cover"><span><b>${x.st.sym}</b> <span style="color:var(--muted2)">${x.st.name}</span></span></span><span style="color:${x.d.chg >= 0 ? 'var(--up)' : 'var(--down)'};font-weight:600;white-space:nowrap">${x.d.chg >= 0 ? '▲' : '▼'} ${Math.abs(x.d.chg).toFixed(2)}%</span></div>`;
+  $('gainers').innerHTML = byChg.slice(0, 3).map(side).join('');
+  $('losers').innerHTML = byChg.slice(-3).reverse().map(side).join('');
+
+  const st = $('status');
+  if (LCN.liveAt) { st.textContent = '● Live · updated ' + LCN.liveAt.toLocaleTimeString(); st.classList.add('live'); }
+}
+
+// ---------- stock detail ----------
+async function loadChart() {
+  const ca = state.selected;
+  const r = RANGES[state.range];
+  if (!ca) return;
+  try {
+    const G = 'https://api.geckoterminal.com/api/v2/networks/solana/';
+    if (!pools[ca]) {
+      const p = await (await fetch(G + 'tokens/' + ca + '/pools')).json();
+      pools[ca] = p.data[0].attributes.address;
+    }
+    const o = await (await fetch(G + 'pools/' + pools[ca] + '/ohlcv/' + r.tf + '?aggregate=' + r.agg + '&limit=' + r.limit + '&token=base')).json();
+    if (state.selected !== ca) return;
+    state.candles = o.data.attributes.ohlcv_list.map((c) => [c[0] * 1000, c[4]]).reverse();
+    renderDetail();
+  } catch (e) { /* keep flat line */ }
+}
+
+function drawChart(price) {
+  const r = RANGES[state.range];
+  const now = Date.now(), start = now - r.ms;
+  const inRange = state.candles.filter((c) => c[0] >= start);
+  const before = state.candles.filter((c) => c[0] < start).pop();
+  const first = before ? before[1] : (inRange.length ? inRange[0][1] : price);
+  // a coin nobody traded still gets a flat line at its current price
+  const pts = [[start, first]].concat(inRange, [[now, isNaN(price) ? first : price]]);
+  const ys = pts.map((p) => p[1]);
+  const hi = Math.max(...ys), lo = Math.min(...ys);
+  const pad = (hi - lo) || hi * 0.02 || 1e-9;
+  const top = hi + pad * 0.25, bottom = lo - pad * 0.25;
+  const xy = pts.map((p) => [((p[0] - start) / r.ms) * 800, 285 - ((p[1] - bottom) / (top - bottom)) * 270]);
+  const steps = [];
+  xy.forEach((p, i) => { if (i) steps.push([p[0], xy[i - 1][1]]); steps.push(p); });
+  const line = steps.map((p) => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+  $('c-line').setAttribute('points', line);
+  $('c-area').setAttribute('points', '0,300 ' + line + ' 800,300');
+  $('c-hi').textContent = 'High ' + fmtPrice(hi);
+  $('c-lo').textContent = 'Low ' + fmtPrice(lo);
+  $('c-from').textContent = r.label;
+  $('c-note').textContent = inRange.length ? '' : 'No trades in this period, price unchanged';
+}
+
+function renderDetail() {
+  const st = STOCKS.find((x) => x.ca === state.selected);
+  if (!st) return;
+  const d = LCN.data(st);
+  $('d-img').src = st.img;
+  $('d-sym').textContent = st.sym;
+  $('d-name').textContent = st.name;
+  $('d-price').textContent = fmtPrice(d.price);
+  $('d-chg').textContent = fmtPct(d.chg, true) + ' (24h)';
+  $('d-chg').style.color = d.chg >= 0 ? 'var(--up)' : 'var(--down)';
+  $('d-mcap').textContent = fmtUsd(d.mcap);
+  $('d-chg2').textContent = fmtPct(d.chg, true);
+  $('d-ca').textContent = st.ca;
+  $('d-solscan').href = 'https://solscan.io/token/' + st.ca;
+  $('d-pump').href = 'https://pump.fun/coin/' + st.ca;
+  $('ranges').innerHTML = Object.keys(RANGES).map((k) => `<button type="button" class="range${k === state.range ? ' active' : ''}" data-range="${k}">${k}</button>`).join('');
+  drawChart(d.price);
+
+  const buy = state.side === 'buy';
+  document.querySelectorAll('.trade-tab').forEach((b) => b.classList.toggle('active', b.dataset.side === state.side));
+  $('t-label').textContent = buy ? 'Amount to spend (SOL)' : 'Amount to sell (' + st.sym + ')';
+  $('t-quick').innerHTML = (buy ? ['0.1', '0.5', '1', '5'] : ['25%', '50%', '75%', 'MAX']).map((q) => `<button type="button" data-quick="${q}">${q}</button>`).join('');
+  $('t-cta').textContent = (buy ? 'BUY ' : 'SELL ') + st.sym;
+  $('t-cta').classList.toggle('sell', !buy);
+  $('t-owned').textContent = LCN.wallet ? '— ' + st.sym : 'Connect your wallet';
+  $('t-hint').textContent = state.tradeMsg || (LCN.wallet ? 'You sign the trade in Phantom. Shares land in your wallet.' : 'Connect Phantom to trade.');
+}
+
+function openStock(ca) {
+  state.selected = ca; state.candles = []; state.tradeMsg = '';
+  $('list-view').classList.add('hidden');
+  $('detail-view').classList.remove('hidden');
+  $('copy').textContent = 'Copy';
+  history.replaceState(null, '', '#' + ca);
+  window.scrollTo(0, 0);
+  renderDetail();
+  loadChart();
+}
+function closeStock() {
+  state.selected = null;
+  $('detail-view').classList.add('hidden');
+  $('list-view').classList.remove('hidden');
+  history.replaceState(null, '', location.pathname);
+  renderList();
+}
+
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('button');
+  if (!t) return;
+  if (t.dataset.tab) {
+    state.tab = t.dataset.tab;
+    document.querySelectorAll('.tab').forEach((b) => b.classList.toggle('active', b === t));
+    renderList();
+  }
+  if (t.dataset.open) openStock(t.dataset.open);
+  if (t.id === 'back') closeStock();
+  if (t.dataset.range) { state.range = t.dataset.range; state.candles = []; renderDetail(); loadChart(); }
+  if (t.dataset.side) { state.side = t.dataset.side; renderDetail(); }
+  if (t.dataset.quick && /^[\d.]+$/.test(t.dataset.quick)) $('t-amount').value = t.dataset.quick;
+  if (t.id === 'copy') { navigator.clipboard && navigator.clipboard.writeText($('d-ca').textContent); t.textContent = 'Copied'; }
+  if (t.id === 't-cta') {
+    if (!LCN.wallet) toggleWallet();
+    else { state.tradeMsg = 'Trading opens soon on LCN.'; renderDetail(); }
+  }
+});
+
+LCN.onUpdate(() => { renderList(); if (state.selected) renderDetail(); });
+renderList();
+refreshPrices();
+setInterval(refreshPrices, 10000);
+setInterval(() => { if (state.selected) loadChart(); }, 60000);
+const fromHash = location.hash.slice(1);
+if (STOCKS.some((s) => s.ca === fromHash)) openStock(fromHash);
+})();
+</script>
+</body>
+</html>

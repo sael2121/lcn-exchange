@@ -1,5 +1,8 @@
 # LCN · Liberty City National Exchange
 
-Trade the biggest companies of the GTA universe with SOL. Static site (HTML/CSS/JS): live prices from DexScreener, charts from GeckoTerminal, Phantom wallet connect.
+- `/` : Coming soon page (public)
+- `/app/` : the full site in progress (Markets, stock pages, Portfolio, How it works)
 
-To list a new company, add a line to `STOCKS` in `app.js` and its logo in `logos/`.
+When the site is ready to launch, move the contents of `app/` back to the root (or point the coming soon button to `/app/`).
+
+To list a new company, add a line to `STOCKS` in `app/app.js` and its logo in `app/logos/`.
