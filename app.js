@@ -15,7 +15,7 @@ var STOCKS = [
 ];
 
 // Link of the LCN account on X (Twitter)
-var X_URL = 'https://x.com/';
+var X_URL = 'https://x.com/LCNpad';
 
 var LCN = {
   live: {},
