@@ -153,7 +153,7 @@ const RANGES = {
   '1D': { tf: 'minute', agg: 15, limit: 96, ms: 86400e3, label: '24 hours ago' },
   '1W': { tf: 'hour', agg: 4, limit: 42, ms: 7 * 86400e3, label: '7 days ago' }
 };
-const state = { tab: 'all', selected: null, range: '1D', candles: [], side: 'buy', tradeMsg: '', busy: false };
+const state = { tab: 'all', selected: null, range: '1D', candles: [], side: 'buy', tradeMsg: '', busy: false, holdings: null };
 const pools = {};
 const $ = (id) => document.getElementById(id);
 
@@ -260,27 +260,21 @@ function renderDetail() {
   $('t-cta').style.opacity = state.busy ? '.7' : '1';
   $('t-cta').classList.toggle('sell', !buy);
   $('t-amount').placeholder = buy ? '0.00 SOL' : 'Amount or %';
-  $('t-owned').textContent = LCN.wallet ? '— ' + st.sym : 'Connect your wallet';
+  $('t-owned').textContent = !LCN.wallet ? 'Connect your wallet' : state.holdings ? fmtQty(state.holdings.tokens[st.ca] || 0) + ' ' + st.sym : '… ' + st.sym;
   $('t-hint').innerHTML = state.tradeMsg || (LCN.wallet ? 'You sign the trade in Phantom. Shares land in your wallet. Routed through pump.fun (0.5% routing fee).' : 'Connect Phantom to trade.');
 }
 
 
 // ---------- trading (PumpPortal builds the pump.fun transaction, Phantom signs and sends it) ----------
-let web3Loading = null;
-function loadWeb3() {
-  if (window.solanaWeb3) return Promise.resolve();
-  if (!web3Loading) {
-    web3Loading = new Promise((resolve, reject) => {
-      const s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.0/lib/index.iife.min.js';
-      s.onload = resolve;
-      s.onerror = () => { web3Loading = null; reject(new Error('Could not load the Solana library. Check your connection and try again.')); };
-      document.head.appendChild(s);
-    });
-  }
-  return web3Loading;
-}
 function esc(t) { return String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
+async function refreshHoldings() {
+  if (!LCN.wallet) { state.holdings = null; return; }
+  try { state.holdings = await lcnHoldings(LCN.wallet); } catch (e) { /* keep last */ }
+  if (state.selected) renderDetail();
+}
+let lastWallet = null;
+LCN.onUpdate(() => { if (LCN.wallet !== lastWallet) { lastWallet = LCN.wallet; state.holdings = null; refreshHoldings(); } });
 
 async function trade() {
   if (state.busy) return;
@@ -305,7 +299,7 @@ async function trade() {
   }
   state.busy = true; state.tradeMsg = 'Preparing the transaction…'; renderDetail();
   try {
-    await loadWeb3();
+    await lcnLoadWeb3();
     const res = await fetch('https://pumpportal.fun/api/trade-local', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -317,6 +311,8 @@ async function trade() {
     const { signature } = await provider.signAndSendTransaction(tx);
     state.tradeMsg = '<b style="color:var(--up)">' + (buy ? 'Buy' : 'Sell') + ' sent!</b> <a href="https://solscan.io/tx/' + esc(signature) + '" target="_blank" rel="noopener" style="color:var(--blue-tab);text-decoration:underline">View on Solscan</a>';
     $('t-amount').value = '';
+    setTimeout(refreshHoldings, 5000);
+    setTimeout(refreshHoldings, 15000);
   } catch (e) {
     const rejected = e && (e.code === 4001 || /reject|cancel/i.test(e.message || ''));
     state.tradeMsg = '<span style="color:var(--down)">' + esc(rejected ? 'Transaction cancelled in Phantom.' : (e && e.message) || 'Something went wrong.') + '</span>';

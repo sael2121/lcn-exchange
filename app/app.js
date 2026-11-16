@@ -61,7 +61,7 @@ async function refreshPrices() {
       if (!ca) return;
       const liq = (p.liquidity && p.liquidity.usd) || 0;
       if (!live[ca] || liq > live[ca].liq) {
-        live[ca] = { price: parseFloat(p.priceUsd), mcap: p.marketCap || p.fdv, chg: (p.priceChange && p.priceChange.h24) || 0, liq };
+        live[ca] = { price: parseFloat(p.priceUsd), priceSol: parseFloat(p.priceNative), mcap: p.marketCap || p.fdv, chg: (p.priceChange && p.priceChange.h24) || 0, liq };
       }
     });
     LCN.live = live;
@@ -69,6 +69,56 @@ async function refreshPrices() {
     LCN.emit();
   } catch (e) { /* keep last values */ }
 }
+
+// ---------- Solana helpers (web3.js loaded on demand, public RPC) ----------
+var LCN_RPC = 'https://solana-rpc.publicnode.com';
+var lcnWeb3Loading = null;
+function lcnLoadWeb3() {
+  if (window.solanaWeb3) return Promise.resolve();
+  if (!lcnWeb3Loading) {
+    lcnWeb3Loading = new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/@solana/web3.js@1.98.0/lib/index.iife.min.js';
+      s.onload = resolve;
+      s.onerror = function () { lcnWeb3Loading = null; reject(new Error('Could not load the Solana library. Check your connection and try again.')); };
+      document.head.appendChild(s);
+    });
+  }
+  return lcnWeb3Loading;
+}
+async function lcnRpc(method, params) {
+  var r = await fetch(LCN_RPC, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: method, params: params }) });
+  var j = await r.json();
+  if (j.error) throw new Error(j.error.message || 'RPC error');
+  return j.result;
+}
+var lcnMintPrograms = null;
+// Reads how many shares of each listed stock a wallet holds: { ca: amount }, plus its SOL balance.
+async function lcnHoldings(owner) {
+  await lcnLoadWeb3();
+  var PK = solanaWeb3.PublicKey;
+  var ATA_PROGRAM = new PK('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL');
+  if (!lcnMintPrograms) {
+    var info = await lcnRpc('getMultipleAccounts', [STOCKS.map(function (s) { return s.ca; }), { encoding: 'base64', dataSlice: { offset: 0, length: 0 } }]);
+    lcnMintPrograms = info.value.map(function (v) { return v ? v.owner : 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb'; });
+  }
+  var ownerKey = new PK(owner);
+  var atas = STOCKS.map(function (s, i) {
+    return PK.findProgramAddressSync([ownerKey.toBytes(), new PK(lcnMintPrograms[i]).toBytes(), new PK(s.ca).toBytes()], ATA_PROGRAM)[0].toBase58();
+  });
+  var res = await Promise.all([
+    lcnRpc('getMultipleAccounts', [atas, { encoding: 'jsonParsed' }]),
+    lcnRpc('getBalance', [owner])
+  ]);
+  var out = {};
+  STOCKS.forEach(function (s, i) {
+    var v = res[0].value[i];
+    var amt = v && v.data && v.data.parsed && v.data.parsed.info && v.data.parsed.info.tokenAmount;
+    out[s.ca] = amt ? (amt.uiAmount || 0) : 0;
+  });
+  return { tokens: out, sol: (res[1].value || 0) / 1e9 };
+}
+function fmtQty(n) { return n >= 1 ? Math.floor(n).toLocaleString('en-US') : (n > 0 ? n.toPrecision(3) : '0'); }
 
 // ---------- wallet (Phantom) ----------
 function lcnPhantomProvider() {

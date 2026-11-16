@@ -28,10 +28,10 @@
     </section>
 
     <section class="kpis hidden" id="kpis">
-      <div class="kpi blue"><small>Portfolio value</small><b>— SOL</b></div>
-      <div class="kpi"><small>Total invested</small><b>— SOL</b></div>
-      <div class="kpi"><small>Profit / loss</small><b>—</b></div>
-      <div class="kpi"><small>Stocks held</small><b>—</b></div>
+      <div class="kpi blue"><small>Shares value</small><b id="k-value">…</b></div>
+      <div class="kpi"><small>Shares value (USD)</small><b id="k-usd">…</b></div>
+      <div class="kpi"><small>Stocks held</small><b id="k-count">…</b></div>
+      <div class="kpi"><small>SOL in wallet</small><b id="k-sol">…</b></div>
     </section>
 
     <section>
@@ -39,20 +39,23 @@
       <div class="tabbar"></div>
       <div class="scroll">
         <div class="table">
-          <div class="trow" style="grid-template-columns:2.2fr 1fr 1.1fr 1.1fr 1.1fr 1fr 0.9fr">
-            <div class="th">Company</div><div class="th">Shares</div><div class="th">Avg. buy price</div><div class="th">Current price</div><div class="th">Value</div><div class="th">P/L %</div><div class="th">Trade</div>
+          <div class="trow" style="grid-template-columns:2.2fr 1.2fr 1.1fr 1.1fr 1.1fr 0.9fr">
+            <div class="th">Company</div><div class="th">Shares</div><div class="th">Current price</div><div class="th">Value (USD)</div><div class="th">Value (SOL)</div><div class="th">Trade</div>
           </div>
-          <div class="td" style="justify-content:center;flex-direction:column;padding:44px 24px;gap:12px;text-align:center">
-            <p style="margin:0;font-size:16px;color:var(--muted)" id="shares-msg">Connect your wallet to see your shares.</p>
-            <a href="index.html" class="btn-blue" style="display:inline-flex;align-items:center;box-shadow:0 4px 0 var(--blue-dark)">Browse stocks</a>
+          <div id="p-rows" style="display:flex;flex-direction:column;gap:3px">
+            <div class="td" style="justify-content:center;flex-direction:column;padding:44px 24px;gap:12px;text-align:center">
+              <p style="margin:0;font-size:16px;color:var(--muted)">Connect your wallet to see your shares.</p>
+              <a href="index.html" class="btn-blue" style="display:inline-flex;align-items:center;box-shadow:0 4px 0 var(--blue-dark)">Browse stocks</a>
+            </div>
           </div>
         </div>
       </div>
+      <p class="note" id="p-note"></p>
     </section>
 
     <section class="panel">
       <div class="panel-head">My trade history</div>
-      <div class="panel-empty" id="history-msg">No trades yet.</div>
+      <div class="panel-empty" id="history-msg">Connect your wallet to see your trades.</div>
     </section>
   </main>
   <div id="chrome-bottom"></div>
@@ -61,14 +64,67 @@
 <script>
 (function () {
 renderChrome('portfolio');
+var holdings = null, loading = false, error = '';
+function $(id) { return document.getElementById(id); }
 function paint() {
-  const on = !!LCN.wallet;
-  document.getElementById('connect-box').classList.toggle('hidden', on);
-  document.getElementById('kpis').classList.toggle('hidden', !on);
-  document.getElementById('shares-msg').textContent = on ? 'Live holdings for ' + shortAddr(LCN.wallet) + ' are coming soon.' : 'Connect your wallet to see your shares.';
+  var on = !!LCN.wallet;
+  $('connect-box').classList.toggle('hidden', on);
+  $('kpis').classList.toggle('hidden', !on);
+  if (!on) {
+    $('p-rows').innerHTML = '<div class="td" style="justify-content:center;flex-direction:column;padding:44px 24px;gap:12px;text-align:center"><p style="margin:0;font-size:16px;color:var(--muted)">Connect your wallet to see your shares.</p><a href="index.html" class="btn-blue" style="display:inline-flex;align-items:center;box-shadow:0 4px 0 var(--blue-dark)">Browse stocks</a></div>';
+    $('history-msg').textContent = 'Connect your wallet to see your trades.';
+    $('p-note').textContent = '';
+    return;
+  }
+  $('history-msg').innerHTML = 'Every trade is on-chain: <a href="https://solscan.io/account/' + LCN.wallet + '#transfers" target="_blank" rel="noopener" style="color:var(--blue-tab);text-decoration:underline">see your transfers on Solscan</a>.';
+  if (!holdings) {
+    $('p-rows').innerHTML = '<div class="td" style="justify-content:center;padding:44px 24px;color:var(--muted)">' + (error || 'Reading your wallet…') + '</div>';
+    ['k-value', 'k-usd', 'k-count', 'k-sol'].forEach(function (k) { $(k).textContent = '…'; });
+    return;
+  }
+  var rows = [], totalSol = 0, totalUsd = 0;
+  STOCKS.forEach(function (st) {
+    var qty = holdings.tokens[st.ca] || 0;
+    if (qty <= 0) return;
+    var d = LCN.data(st);
+    var usd = qty * d.price;
+    var sol = d.priceSol ? qty * d.priceSol : null;
+    totalUsd += usd; if (sol != null) totalSol += sol;
+    rows.push({ st: st, qty: qty, d: d, usd: usd, sol: sol });
+  });
+  rows.sort(function (a, b) { return b.usd - a.usd; });
+  $('k-value').textContent = totalSol.toFixed(4) + ' SOL';
+  $('k-usd').textContent = '$' + totalUsd.toFixed(2);
+  $('k-count').textContent = rows.length;
+  $('k-sol').textContent = holdings.sol.toFixed(4);
+  $('p-rows').innerHTML = rows.length ? rows.map(function (r) {
+    return '<div class="trow" style="grid-template-columns:2.2fr 1.2fr 1.1fr 1.1fr 1.1fr 0.9fr">' +
+      '<div class="td name"><img class="logo" src="' + r.st.img + '" alt=""><span class="sym">' + r.st.sym + '</span><span>' + r.st.name + '</span></div>' +
+      '<div class="td" style="font-weight:600">' + fmtQty(r.qty) + '</div>' +
+      '<div class="td">' + fmtPrice(r.d.price) + '</div>' +
+      '<div class="td">$' + r.usd.toFixed(2) + '</div>' +
+      '<div class="td">' + (r.sol != null ? r.sol.toFixed(4) : '—') + '</div>' +
+      '<div class="td" style="justify-content:center;padding:8px"><a class="btn-blue" style="display:inline-flex;align-items:center" href="index.html#' + r.st.ca + '">Trade</a></div></div>';
+  }).join('') : '<div class="td" style="justify-content:center;flex-direction:column;padding:44px 24px;gap:12px;text-align:center"><p style="margin:0;font-size:16px;color:var(--muted)">You don\'t own any LCN stocks yet.</p><a href="index.html" class="btn-blue" style="display:inline-flex;align-items:center;box-shadow:0 4px 0 var(--blue-dark)">Browse stocks</a></div>';
+  $('p-note').textContent = 'Read live from the blockchain for ' + shortAddr(LCN.wallet) + '. Values use current market prices.';
 }
-LCN.onUpdate(paint);
+async function load() {
+  if (!LCN.wallet || loading) return;
+  loading = true; error = '';
+  try { holdings = await lcnHoldings(LCN.wallet); }
+  catch (e) { error = 'Could not read your wallet right now. Retrying…'; }
+  loading = false;
+  paint();
+}
+var lastWallet = null;
+LCN.onUpdate(function () {
+  if (LCN.wallet !== lastWallet) { lastWallet = LCN.wallet; holdings = null; load(); }
+  paint();
+});
 paint();
+refreshPrices();
+setInterval(refreshPrices, 10000);
+setInterval(load, 20000);
 })();
 </script>
 </body>
