@@ -99,7 +99,7 @@ function renderChrome(active) {
   document.getElementById('chrome-top').innerHTML = `
     <header class="header">
       <a href="index.html" class="brand">
-        <div class="brand-mark arch">LCN<svg width="150" height="60" viewBox="0 0 150 60" fill="none" aria-hidden="true"><path d="M2 46 L30 20 L52 38 L78 10 L102 30 L146 4" stroke="#2b55d6" stroke-width="7" stroke-linejoin="round"/><path d="M2 46 L30 20 L52 38 L78 10 L102 30 L146 4" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/></svg></div>
+        <img class="brand-logo" src="logos/lcn.png" alt="LCN">
         <div class="brand-text"><span class="brand-title arch">LIBERTY CITY NATIONAL</span><span class="brand-sub">EXCHANGE</span></div>
       </a>
       <button type="button" class="wallet-btn" data-wallet>${WALLET_ICON}<span data-wallet-label>Connect wallet</span></button>
