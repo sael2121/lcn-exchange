@@ -36,6 +36,14 @@ function fmtPrice(n) {
   if (n == null || isNaN(n)) return '—';
   return '$' + (n < 0.01 ? n.toPrecision(4) : n.toFixed(4));
 }
+function fmtChange(n) {
+  if (n == null || isNaN(n)) return '—';
+  if (n === 0) return '0.00';
+  const abs = Math.abs(n);
+  // fixed decimals with 2 significant digits, never scientific notation
+  const dec = abs >= 0.01 ? 4 : Math.min(12, Math.ceil(-Math.log10(abs)) + 1);
+  return (n > 0 ? '+' : '−') + abs.toFixed(dec);
+}
 function fmtPct(n, signed) { return (signed && n >= 0 ? '+' : '') + n.toFixed(2) + '%'; }
 
 // ---------- live prices (DexScreener, refreshed every 10 s) ----------

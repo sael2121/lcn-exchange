@@ -34,7 +34,7 @@
         </div>
         <div class="tabbar"></div>
         <div class="scroll">
-          <div class="table">
+          <div class="table stocks">
             <div class="trow">
               <div class="th" style="display:flex;justify-content:space-between">Company name <span style="color:#6b7280" aria-hidden="true">▼</span></div>
               <div class="th">Current price</div>
@@ -94,8 +94,8 @@
                   <line x1="0" y1="60" x2="800" y2="60"/><line x1="0" y1="120" x2="800" y2="120"/><line x1="0" y1="180" x2="800" y2="180"/><line x1="0" y1="240" x2="800" y2="240"/>
                   <line x1="160" y1="0" x2="160" y2="300"/><line x1="320" y1="0" x2="320" y2="300"/><line x1="480" y1="0" x2="480" y2="300"/><line x1="640" y1="0" x2="640" y2="300"/>
                 </g>
-                <polygon id="c-area" fill="#2b55d6" fill-opacity="0.12" points=""/>
-                <polyline id="c-line" fill="none" stroke="#2b55d6" stroke-width="3" stroke-linejoin="round" vector-effect="non-scaling-stroke" points=""/>
+                <polygon id="c-area" fill="#3359c6" fill-opacity="0.12" points=""/>
+                <polyline id="c-line" fill="none" stroke="#3359c6" stroke-width="3" stroke-linejoin="round" vector-effect="non-scaling-stroke" points=""/>
               </svg>
               <div class="chart-foot"><span id="c-from"></span><span id="c-note"></span><span>now</span></div>
             </div>
@@ -167,7 +167,7 @@ function renderList() {
     <div class="trow body">
       <div class="td name"><img class="logo" src="${st.img}" alt=""><span class="sym">${st.sym}</span><button type="button" class="linkbtn" data-open="${st.ca}">${st.name}</button></div>
       <div class="td">${fmtPrice(d.price)}</div>
-      <div class="td">${(fluct >= 0 ? '+' : '') + (Math.abs(fluct) < 0.01 ? fluct.toPrecision(3) : fluct.toFixed(4))}</div>
+      <div class="td">${fmtChange(fluct)}</div>
       <div class="td"><span>${fmtPct(d.chg)}</span><span style="color:${d.chg >= 0 ? '#2f9e3a' : '#d0021b'}" aria-hidden="true">${d.chg >= 0 ? '▲' : '▼'}</span></div>
       <div class="td" style="font-weight:600">${fmtUsd(d.mcap)}</div>
       <div class="td" style="justify-content:center;padding:8px"><button type="button" class="btn-blue" data-open="${st.ca}">Trade</button></div>
