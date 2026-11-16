@@ -36,7 +36,7 @@
   .track { display: flex; gap: 44px; width: max-content; white-space: nowrap; font-size: 20px; font-weight: 600; animation: scroll 36s linear infinite; }
   .track span b { color: #1a7a24; }
   @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  footer { background: #1c1c1c; color: #c7c7c7; font-size: 13px; text-align: center; padding: 16px 20px; }
+  footer { background: #1c1c1c; height: 14px; }
   @media (prefers-reduced-motion: reduce) { .soon, .track { animation: none; } }
   @media (max-width: 480px) { .logo { width: 170px; height: 170px; } .companies img { width: 42px; height: 42px; } }
 </style>
@@ -68,7 +68,7 @@
 <div class="ticker" aria-hidden="true">
   <div class="track" id="track"></div>
 </div>
-<footer>LCN · Liberty City National Exchange — fan-made, on Solana. Nothing here is financial advice.</footer>
+<footer aria-hidden="true"></footer>
 
 <script>
 (function () {
